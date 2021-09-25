@@ -6,8 +6,12 @@ import { registerUser } from "../redux/action";
 import { InputGroup, FormControl, Button } from 'react-bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import { useHistory } from "react-router-dom";
+
+import { ToastContainer, toast } from 'material-react-toastify';
+import 'material-react-toastify/dist/ReactToastify.css';
+
 
 function InputUserForm() {
     const dispatch = useDispatch();
@@ -20,8 +24,42 @@ function InputUserForm() {
     }, [gender])
 
     const handleClickStartButton = () => {
-        dispatch(registerUser(name, gender));
-        history.push('/sampleQuestion');
+        const nonFullKorean = /[ㄱ-ㅎ]/g
+
+        if(nonFullKorean.test(name)){
+            setName('')
+            setGender('')
+            toast.error("올바른 이름을 입력하세요.",{
+                position: "top-right"
+            })
+        }
+        else{
+            dispatch(registerUser(name, gender));
+            history.push('/sampleQuestion');
+        }
+
+    }
+
+    const handleInputName = (e) => {
+
+        const regex = /[a-z0-9~!@#$%^&*()\-=+_';<>/.`:",[\]?|{}\s*\r\n]/gi
+        const fullKorean = /^[ㄱ-ㅎ|가-힣]*$/
+        console.log(e.target.value)
+
+        if(regex.test(e.target.value)){
+            toast.error("한글만 입력해주세요.",{
+                position: "top-right"
+            })
+            e.target.value = e.target.value.replace(regex, '')
+        }
+        
+    
+        if(fullKorean.test(e.target.value)){
+            setName(e.target.value);
+        }
+
+        
+
     }
 
     return (
@@ -29,16 +67,18 @@ function InputUserForm() {
             <InputGroup className="mb-3" style={{
                 width: '300px',
             }}>
+                
                 <InputGroup.Text id="name">이름</InputGroup.Text>
                 <FormControl
                     placeholder="이름"
                     aria-label="name"
-                    onChange={(e) => setName(e.target.value)}
+                    onChange={handleInputName}
                     value={name}
                 />
             </InputGroup>
-
+            <ToastContainer/>
             <div>
+                
                 <RadioBtnBox>
                     <RadioBtn type='radio' id='male' checked={gender === 'male'} onClick={() => handleClickRadioButton('male')} />
                     <label htmlFor='male'>남자</label>
@@ -53,6 +93,8 @@ function InputUserForm() {
             <Button
                 disabled={!(name && gender)}
                 onClick={handleClickStartButton}>검사 시작</Button>
+
+            {(name && gender)? <p></p>:<BlinkStr>이름과 성별을 입력하세요</BlinkStr>}
 
         </Container>
     )
@@ -100,4 +142,23 @@ const RadioBtnBox = styled.div`
 
 const RadioBtn = styled.input`
   margin-right: 5px;
+`
+
+
+
+const blink = keyframes`
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+`
+//styled component 변수의 첫글자는 무조건 대문자!!
+const BlinkStr = styled.div`
+    display: inline-block;
+    animation: ${blink} 2s linear infinite;
+    padding: 2rem 1rem;
+    font-size: 1.2rem;
+    color: red;
 `
