@@ -1,7 +1,7 @@
 import React from "react";
 
-import { useEffect, useState, useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useState, useCallback } from 'react';
+import { useDispatch } from 'react-redux';
 import { registerUser } from "../redux/action";
 import { InputGroup, FormControl, Button } from 'react-bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -57,8 +57,6 @@ function InputUserForm() {
         if(fullKorean.test(e.target.value)){
             setName(e.target.value);
         }
-
-        
 
     }
 
@@ -143,8 +141,6 @@ const RadioBtnBox = styled.div`
 const RadioBtn = styled.input`
   margin-right: 5px;
 `
-
-
 
 const blink = keyframes`
     0% {
