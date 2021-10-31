@@ -33,7 +33,6 @@ function QuestionForm(props) {
 
     const handleClickRadioButton = useCallback((radioBtnName) => {
         setSelect(radioBtnName)
-        //console.log(currPage,'번째 페이지의',questionItemNumber,'번째 질문');
         if(radioBtnName === answerScore01) {
             const newScore = {
                 id: questionItemNumber,
