@@ -101,7 +101,7 @@ function QuestionList() {
       </ArrowWrapper>
       <Button
         onClick={handleClickCompleteButton}
-        disabled={!(currPage === pageCount-1)}>
+        disabled={!(getScoreList.length === questionTotalNumber)}>
           검사 완료
       </Button>
       <ArrowWrapper 
