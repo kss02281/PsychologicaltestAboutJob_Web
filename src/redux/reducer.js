@@ -1,4 +1,5 @@
 import produce from "immer";
+import { Accordion } from "react-bootstrap";
 
 const initState = {
     name: '',
@@ -35,8 +36,13 @@ const Reducer = (state = initState, action) => {
             }
         case "ADD_QUESTION_SCORE":
             return produce(state, (draft) => {
+                const scoreItem = draft.questionScoreList.find((item) => item.id === action.questionNumber);
+                if (scoreItem){
+                    console.log(draft.questionScoreList);
+                    draft.questionScoreList = draft.questionScoreList.filter(item => item.id !== action.questionNumber)
+                }
                 if(draft.questionScoreList)
-                {
+                {   
                     draft.questionScoreList = [...draft.questionScoreList,{
                         id: action.questionNumber,
                         questionScore: action.questionScore

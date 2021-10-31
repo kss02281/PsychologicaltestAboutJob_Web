@@ -7,9 +7,10 @@ import { Card, Button } from 'react-bootstrap'
 import { FaArrowAltCircleRight, FaArrowAltCircleLeft } from "react-icons/fa";
 
 function QuestionForm(props) {
+    const getScoreList = useSelector(state => state.questionScoreList);
+    const questionTotalNumber = useSelector(state => state.questionTotalNumber);
 
     const [select, setSelect] = useState(0);
-    const [score, setScore] = useState(0);
     const [state, setState] = useState('');
 
     const commonQuestion = props.commonQuestion;
@@ -23,26 +24,28 @@ function QuestionForm(props) {
     const currPage = props.currPage;
     const onButtonClick = props.onButtonClick;
 
-
-
+    useEffect(()=>{
+      getScoreList.map((item) => {
+        if(item.id === questionItemNumber)
+          setSelect(item.questionScore);
+      })
+    },[ questionItemNumber ])
 
     const handleClickRadioButton = useCallback((radioBtnName) => {
         setSelect(radioBtnName)
         //console.log(currPage,'번째 페이지의',questionItemNumber,'번째 질문');
-        if(radioBtnName === 1) {
+        if(radioBtnName === answerScore01) {
             const newScore = {
                 id: questionItemNumber,
                 score: answerScore01
             };
-            //console.log(answerScore01);
             onButtonClick(newScore);
         }
-        else if(radioBtnName === 2){
+        else if(radioBtnName === answerScore02){
             const newScore = {
                 id: questionItemNumber,
                 score: answerScore02
             };
-            //console.log(answerScore02);
             onButtonClick(newScore);
         }
         
@@ -62,18 +65,17 @@ function QuestionForm(props) {
             <Card.Text>
                 <RadioBtnContainer>
                     <RadioBtnBox>
-                        <RadioBtn type='radio' id={`${questionItemNumber}_1`} name={questionItemNumber} checked={select === 1} onClick={() => {
+                        <RadioBtn type='radio' id={`${questionItemNumber}_1`} name={questionItemNumber} value={answerScore01} onClick={(e) => {
                                 setState(firstQuestionState);
-                                handleClickRadioButton(1);
-                            }}/>
+                                handleClickRadioButton(e.currentTarget.value);
+                            }} checked={select === answerScore01} />
                         <label htmlFor={`${questionItemNumber}_1`} style={{fontSize: '20px'}}>{question01}</label>
                     </RadioBtnBox>
-
                     <RadioBtnBox>
-                        <RadioBtn type='radio' id={`${questionItemNumber}_2`} name={questionItemNumber} checked={select === 2} onClick={() => {
+                        <RadioBtn type='radio' id={`${questionItemNumber}_2`} name={questionItemNumber} value={answerScore02} onClick={(e) => {
                                 setState(secondQuestionState);
-                                handleClickRadioButton(2);
-                            }}/>
+                                handleClickRadioButton(e.currentTarget.value);
+                            }} checked={select === answerScore02}/>
                         <label htmlFor={`${questionItemNumber}_2`} style={{fontSize: '20px'}}>{question02}</label>
                     </RadioBtnBox>
                 </RadioBtnContainer>
