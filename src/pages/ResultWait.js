@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
 import { Button } from 'react-bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -18,8 +18,13 @@ function GoResultPage(){
   const getScoreList = useSelector(state => state.questionScoreList);
   const genderStr = useSelector(state=>state.gender);
 
+  const [sortScoreList, setSortScoreList] = useState([...getScoreList])
+
   const resultToString= () => {
-    getScoreList.map(question => {
+    sortScoreList.sort((a, b) => {
+      return a.id - b.id
+    })
+    sortScoreList.map(question => {
         const string = 'B'+question.id+'='+question.questionScore+' ';
         wonScore = wonScore + string;
     })

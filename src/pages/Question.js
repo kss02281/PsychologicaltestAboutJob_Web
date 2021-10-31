@@ -21,13 +21,13 @@ function QuestionList() {
   const [selectQuestion, setSelectQuestion] = useState(questions.slice(0, 5));
   const [currPage, setCurrPage] = useState(0);
   const [score, setScore] = useState(0);
-  const [itemNumber, setItemNumber] = useState(0);
+  const [itemNumber, setItemNumber] = useState(1);
   const [itemScore, setItemScore] = useState(0);
   const [percentage, setPercentage] = useState(0);
 
   useEffect(()=>{
     setSelectQuestion(questions.slice(currPage*5, (currPage+1)*5));
-  },[currPage])
+  },[ selectQuestion, currPage])
 
   const handleClickLeftArrow = ()=>{
     setCurrPage(currPage - 1);
@@ -44,28 +44,26 @@ function QuestionList() {
 
   const displayScore = (newScore) => {
     setScore({...score, ...newScore});
-    console.log('displayScore')
+    console.log('displayScore');
   }
 
   useEffect(() => {
-    if(score){
-      console.log('item이 바꼈을때',score);
+    console.log('Change score')
+    console.log(score);
+    setItemNumber(score.id);
+    if (score) {
       dispatch(addQuestionScore(score.id,score.score));
-      
-      setPercentage(Math.ceil((itemNumber/questionTotalNumber)*100));
+    }
+    
+  }, [score])
+
+  useEffect(() => {
+    if(score){
+      setPercentage(Math.ceil((getScoreList.length/questionTotalNumber)*100));
       console.log(getScoreList);
     }
     console.log('다음 질문으로 넘어갔습니다.');
   }, [ itemNumber ])
-
-  useEffect(() => {
-    if(score){  
-      console.log('현재 score값은',score)
-      console.log(score.id,'번째 질문의 점수는',score.score,'입니다.');
-      setItemNumber(score.id);
-    }
-  },[ score, itemNumber ])
-
 
 
 
@@ -73,8 +71,8 @@ function QuestionList() {
     <>
       <Title>검사진행</Title>
       <ProgressBar animated now={`${percentage}`} label={`${percentage}%`} style={{maxWidth: "40rem", display: 'flex', alignItems: 'center', justifyContent: 'start', marginLeft: 'auto', marginRight: 'auto'}}/>
+      
       <Container>
-        
         {
         selectQuestion.map((question, idx) => (
         <> 
@@ -140,7 +138,7 @@ const Container = styled.div`
   align-items: center;
   justify-content: center;
   width: 700px;
-  height: 700px;
+  height: auto;
   flex-direction: column;
   margin-left: auto;
   margin-right: auto;
