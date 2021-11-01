@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { addQuestionScore } from '../redux/action';
+import { addQuestionScore, setScoreString, setGenderNumber } from '../redux/action';
 import styled, {css} from 'styled-components'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Button, ProgressBar } from 'react-bootstrap'
@@ -22,7 +22,6 @@ function QuestionList() {
   const [currPage, setCurrPage] = useState(0);
   const [score, setScore] = useState(0);
   const [itemNumber, setItemNumber] = useState(1);
-  const [itemScore, setItemScore] = useState(0);
   const [percentage, setPercentage] = useState(0);
 
   useEffect(()=>{
@@ -138,7 +137,7 @@ const Container = styled.div`
   align-items: center;
   justify-content: center;
   width: 700px;
-  height: auto;
+  height: 700px;
   flex-direction: column;
   margin-left: auto;
   margin-right: auto;
