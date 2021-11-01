@@ -68,14 +68,14 @@ function QuestionForm(props) {
                                 setState(firstQuestionState);
                                 handleClickRadioButton(e.currentTarget.value);
                             }} checked={select === answerScore01} />
-                        <label htmlFor={`${questionItemNumber}_1`} style={{fontSize: '20px'}}>{question01}</label>
+                        <label htmlFor={`${questionItemNumber}_1`} style={{fontSize: '20px', cursor: 'pointer'}}>{question01}</label>
                     </RadioBtnBox>
                     <RadioBtnBox>
                         <RadioBtn type='radio' id={`${questionItemNumber}_2`} name={questionItemNumber} value={answerScore02} onClick={(e) => {
                                 setState(secondQuestionState);
                                 handleClickRadioButton(e.currentTarget.value);
                             }} checked={select === answerScore02}/>
-                        <label htmlFor={`${questionItemNumber}_2`} style={{fontSize: '20px'}}>{question02}</label>
+                        <label htmlFor={`${questionItemNumber}_2`} style={{fontSize: '20px', cursor: 'pointer'}}>{question02}</label>
                     </RadioBtnBox>
                 </RadioBtnContainer>
 
@@ -127,13 +127,14 @@ const RadioBtnBox = styled.div`
   display: flex;
   align-items: center;
   font-size: 15px;
+ 
 `
 
 const RadioBtn = styled.input`
   width: 20px;
   height: 20px;
   margin-right: 5px;
-
+  cursor: pointer;
   label {
     font-size: 25px;
   }
