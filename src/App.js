@@ -3,7 +3,7 @@ import React, { Component, useState } from 'react';
 import { BrowserRouter, Route } from "react-router-dom";
 import { Main, SampleQuestion, Question, ResultWait, FinalResult } from "./pages";
 import { Provider } from 'react-redux';
-import store from './redux/store';
+import store from './store';
 
 class App extends Component {
   render() {

@@ -3,12 +3,11 @@ import { useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled, {css} from 'styled-components'
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Card, Button } from 'react-bootstrap'
-import { FaArrowAltCircleRight, FaArrowAltCircleLeft } from "react-icons/fa";
+import { Card, Button } from 'react-bootstrap';
+import { selector } from '../store/modules/reducer';
 
 function QuestionForm(props) {
-    const getScoreList = useSelector(state => state.questionScoreList);
-    const questionTotalNumber = useSelector(state => state.questionTotalNumber);
+    const getScoreList = useSelector(selector.getScoreList);
 
     const [select, setSelect] = useState(0);
     const [state, setState] = useState('');
@@ -25,43 +24,34 @@ function QuestionForm(props) {
     const onButtonClick = props.onButtonClick;
 
     useEffect(()=>{
-      getScoreList.map((item) => {
-        if(item.id === questionItemNumber)
-          setSelect(item.questionScore);
-      })
-    },[ questionItemNumber ])
+      if(getScoreList){
+        getScoreList.map((item) => {
+          if(item.id === questionItemNumber){
+            //console.log('getScoreList',questionItemNumber,' : ',item.questionScore);
+            setSelect(item.score);
+            setState(item.description);
+          }
+        })
+      }
+
+    },[ getScoreList, questionItemNumber ])
 
     const handleClickRadioButton = useCallback((radioBtnName) => {
         setSelect(radioBtnName)
-        if(radioBtnName === answerScore01) {
-            const newScore = {
-                id: questionItemNumber,
-                score: answerScore01
-            };
-            onButtonClick(newScore);
-        }
-        else if(radioBtnName === answerScore02){
-            const newScore = {
-                id: questionItemNumber,
-                score: answerScore02
-            };
-            onButtonClick(newScore);
-        }
-        
-    },[select])
-
-    useEffect(()=>{
-        setSelect(0);
-        setState('');
-    },[currPage]);
-
+        const newScore = {
+          id: questionItemNumber,
+          score: radioBtnName,
+          description: radioBtnName === answerScore01? firstQuestionState : secondQuestionState
+        };
+        onButtonClick(newScore);
+    },[ answerScore01, answerScore02, questionItemNumber ])
 
     return (
     <Container> 
       < Card border = "primary" style = {{ width: '40rem', marginTop: '30px' }} > 
       <Card.Header>질문{questionItemNumber}  {commonQuestion}</Card.Header>
         <Card.Body>
-            <Card.Text>
+            <div>
                 <RadioBtnContainer>
                     <RadioBtnBox>
                         <RadioBtn type='radio' id={`${questionItemNumber}_1`} name={questionItemNumber} value={answerScore01} onClick={(e) => {
@@ -78,12 +68,10 @@ function QuestionForm(props) {
                         <label htmlFor={`${questionItemNumber}_2`} style={{fontSize: '20px', cursor: 'pointer'}}>{question02}</label>
                     </RadioBtnBox>
                 </RadioBtnContainer>
-
                 <StateValue>
                     {state}
                 </StateValue>
-
-            </Card.Text>
+            </div>
         </Card.Body>
     </Card>
     </Container>
@@ -127,7 +115,6 @@ const RadioBtnBox = styled.div`
   display: flex;
   align-items: center;
   font-size: 15px;
- 
 `
 
 const RadioBtn = styled.input`
