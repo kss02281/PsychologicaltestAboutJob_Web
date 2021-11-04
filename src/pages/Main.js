@@ -1,8 +1,8 @@
-import React from "react";
-
+import React, { useEffect } from "react";
+import axios from 'axios';
 import { useState, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
-import { registerUser } from "../redux/action";
+import { actions } from "../store/modules/reducer";
 import { InputGroup, FormControl, Button } from 'react-bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -11,13 +11,18 @@ import { useHistory } from "react-router-dom";
 
 import { ToastContainer, toast } from 'material-react-toastify';
 import 'material-react-toastify/dist/ReactToastify.css';
+import { useSelector } from 'react-redux';
 
 
 function InputUserForm() {
+
     const dispatch = useDispatch();
     const history = useHistory();
     const [name, setName] = useState('');
     const [gender, setGender] = useState('');
+    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [select, setSelect] = useState(0);
 
     const handleClickRadioButton = useCallback((radioBtnName) => {
         setGender(radioBtnName)
@@ -34,7 +39,7 @@ function InputUserForm() {
             })
         }
         else{
-            dispatch(registerUser(name, gender));
+            dispatch(actions.registerUser({name, gender}));
             history.push('/sampleQuestion');
         }
 
@@ -78,12 +83,12 @@ function InputUserForm() {
             <div>
                 
                 <RadioBtnBox>
-                    <RadioBtn type='radio' id='male' checked={gender === 'male'} onClick={() => handleClickRadioButton('male')} />
+                    <RadioBtn type='radio' name='gender' id='male' defaultChecked={gender === 'male'} onClick={() => handleClickRadioButton('male')} />
                     <label htmlFor='male'>남자</label>
                 </RadioBtnBox>
 
                 <RadioBtnBox>
-                    <RadioBtn type='radio' id='female' checked={gender === 'female'} onClick={() => handleClickRadioButton('female')} />
+                    <RadioBtn type='radio' name='gender' id='female' defaultChecked={gender === 'female'} onClick={() => handleClickRadioButton('female')} />
                     <label htmlFor='female'>여자</label>
                 </RadioBtnBox>
             </div>

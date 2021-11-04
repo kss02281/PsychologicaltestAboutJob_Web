@@ -1,19 +1,19 @@
 import React from "react";
 import { useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setQuestion, setTotalNumber } from "../redux/action";
+import { actions } from "../store/modules/reducer";
 import axios from 'axios';
 import styled from "styled-components";
 import { Card, Button, ProgressBar } from 'react-bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useHistory } from "react-router-dom";
+import { selector } from '../store/modules/reducer';
 
 
 function Sample() {
     const dispatch = useDispatch();
     const history = useHistory();
-    const question = useSelector(state => state.question);
-    const questionTotalNumber = useSelector(state => state.questionTotalNumber);
+    const questions = useSelector(state => state.question);
 
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -26,8 +26,8 @@ function Sample() {
             setLoading(true);
             const response = await axios.get("https://www.career.go.kr/inspct/openapi/test/questions?apikey=bb3525c7992f792567d46f2413f29a32&q=6");
             console.log(response.data['RESULT']);
-            dispatch(setQuestion(response.data['RESULT']));
-            dispatch(setTotalNumber(response.data['RESULT'].length));
+            dispatch(actions.setQuestion(response.data['RESULT']));
+            dispatch(actions.setTotalNumber(response.data['RESULT'].length));
 
             setLoading(false);
         } catch (e) {
@@ -37,16 +37,15 @@ function Sample() {
 
     useEffect(() => {
         fetchQuestion();
-        
     }, [])
 
     useEffect(() => { 
-      if(question){
-        setFirstQuestion(question.slice(0,1));
+      if(questions){
+        setFirstQuestion(questions.slice(0,1));
         console.log(firstQuestion);
       }
       
-    }, [question]);
+    }, [ questions ]);
 
     const handleClickRadioButton = useCallback((radioBtnName) => {
         setSelect(radioBtnName)
@@ -71,33 +70,33 @@ function Sample() {
                     <Card.Header>가치의 뜻을 잘모르겠다면 문항 아래에 있는 가치의 설명을 확인해보세요.</Card.Header>
                     <Card.Body>
                         <Card.Title>두 개 가치 중에 자신에게 더 중요한 가치를 선택하세요.</Card.Title>
-                        <Card.Text>
-                        {firstQuestion?.map(element => {
-                            return (
-                                <>
-                                    <RadioBtnContainer>
-                                        <RadioBtnBox>
-                                            <RadioBtn type='radio' id='1' checked={select === 1} onClick={() => {
-                                                setState(element.answer03);
-                                                handleClickRadioButton(1);
-                                            }}/>
-                                            <label htmlFor='1'>{element.answer01}</label>
-                                        </RadioBtnBox>
+                        <div>
+                          {firstQuestion?.map(element => {
+                              return (
+                                  <>
+                                      <RadioBtnContainer>
+                                          <RadioBtnBox>
+                                              <RadioBtn type='radio' id='1' checked={select === 1} onClick={() => {
+                                                  setState(element.answer03);
+                                                  handleClickRadioButton(1);
+                                              }}/>
+                                              <label htmlFor='1' style={{fontSize: '20px', cursor: 'pointer'}}>{element.answer01}</label>
+                                          </RadioBtnBox>
 
-                                        <RadioBtnBox>
-                                            <RadioBtn type='radio' id='2' checked={select === 2} onClick={() => {
-                                                setState(element.answer04);
-                                                handleClickRadioButton(2);
-                                            }}/>
-                                            <label htmlFor='2'>{element.answer02}</label>
-                                        </RadioBtnBox>
-                                    </RadioBtnContainer>
-                                            
-                                    <StateValue> {state} </StateValue>
-                                </>
-                          )
-                        })}
-                        </Card.Text> 
+                                          <RadioBtnBox>
+                                              <RadioBtn type='radio' id='2' checked={select === 2} onClick={() => {
+                                                  setState(element.answer04);
+                                                  handleClickRadioButton(2);
+                                              }}/>
+                                              <label htmlFor='2' style={{fontSize: '20px', cursor: 'pointer'}}>{element.answer02}</label>
+                                          </RadioBtnBox>
+                                      </RadioBtnContainer>
+                                              
+                                      <StateValue> {state} </StateValue>
+                                  </>
+                            )
+                          })}
+                        </div> 
                     </Card.Body>
                 </Card>
                 <Button
@@ -161,11 +160,18 @@ const RadioBtnBox = styled.div`
 `
 
 const RadioBtn = styled.input`
+  width: 20px;
+  height: 20px;
+  margin-right: 5px;
+  cursor: pointer;
+  label {
+    font-size: 25px;
+  }
 `
 
 const StateValue = styled.h1`
   display: flex;
-  font-size: 20px;
+  font-size: 18px;
   flex-wrap: wrap;
   margin-top: 20px;
   @media (max-width: 400px) {

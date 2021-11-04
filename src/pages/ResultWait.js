@@ -5,8 +5,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 import styled from "styled-components";
 import { useHistory } from "react-router-dom";
-import { setScoreString, setGenderNumber } from '../redux/action';
+import { actions } from '../store/modules/reducer';
 import { useDispatch, useSelector } from "react-redux";
+import { selector } from '../store/modules/reducer';
 
 
 function GoResultPage(){
@@ -15,8 +16,8 @@ function GoResultPage(){
   let wonScore = '';
   let genderNumber = 0;
 
-  const getScoreList = useSelector(state => state.questionScoreList);
-  const genderStr = useSelector(state=>state.gender);
+  const getScoreList = useSelector(selector.getScoreList);
+  const genderStr = useSelector(selector.getGender);
 
   const [sortScoreList, setSortScoreList] = useState([...getScoreList])
 
@@ -25,7 +26,7 @@ function GoResultPage(){
       return a.id - b.id
     })
     sortScoreList.map(question => {
-        const string = 'B'+question.id+'='+question.questionScore+' ';
+        const string = 'B'+question.id+'='+question.score+' ';
         wonScore = wonScore + string;
     })
   }
@@ -37,8 +38,8 @@ function GoResultPage(){
 
   const handleClickFinalResultButton = () => {
     console.log('결과 페이지로');
-    dispatch(setScoreString(wonScore));
-    dispatch(setGenderNumber(genderNumber));
+    dispatch(actions.setScoreString(wonScore));
+    dispatch(actions.setGenderNumber(genderNumber));
     history.push('./finalResult');
   }
 

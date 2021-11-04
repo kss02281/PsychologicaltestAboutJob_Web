@@ -2,19 +2,20 @@ import React, { useEffect, useState, PureComponent } from "react";
 import styled, { isStyledComponent } from "styled-components";
 import { useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
-import { setWonScoreList, setHighScore, setJobList, resetValues} from '../redux/action';
+import { actions } from '../store/modules/reducer';
 import axios from 'axios';
 import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 import Table from 'react-bootstrap/Table'
 import { Button } from 'react-bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { selector } from '../store/modules/reducer'
 
 function Result() {
     const dispatch = useDispatch();
 
-    const scoreStringCheck = useSelector(state => state.scoreString);
-    const getName = useSelector(state => state.name);
-    const genderNumber = useSelector(state => state.genderNumber);
+    const scoreStringCheck = useSelector(selector.scoreStringCheck);
+    const getName = useSelector(selector.getName);
+    const genderNumber = useSelector(selector.genderNumber);
 
     const [chartData, setChartData] = useState([]);
     const [date, setDate] = useState('');
@@ -63,7 +64,7 @@ function Result() {
             wonScoreValSort = [...wonScoreVal];
             wonScoreValSort = wonScoreValSort.sort(function (a, b) {return b - a}); //내림차순 정렬
 
-            dispatch(setWonScoreList(wonScoreVal));
+            dispatch(actions.setWonScoreList(wonScoreVal));
             console.log(wonScoreVal, wonScoreValSort);
 
             const wonScoreFiltered = wonScoreVal.map((score, idx) => {
@@ -78,7 +79,7 @@ function Result() {
             no1 = wonScoreValSort[0];
             no2 = wonScoreValSort[1];
             console.log(no1, no2);
-            dispatch(setHighScore(no1, no2));
+            dispatch(actions.setHighScore({no1, no2}));
 
             const response3 = await axios.get('https://inspct.career.go.kr/inspct/api/psycho/value/jobs',{params: {no1: no1, no2: no2}});
             const response4 = await axios.get('https://inspct.career.go.kr/inspct/api/psycho/value/majors',{params: {no1: no1, no2: no2}});
@@ -89,7 +90,7 @@ function Result() {
             console.log('종사자 평균 전공별 직업 정보 요청');
             //console.log(response4.data);
 
-            dispatch(setJobList(response3.data, response4.data));
+            dispatch(actions.setJobList({jobAgeList : response3.data, jobMajorList : response4.data}));
 
             
             setLoading(false);
@@ -99,9 +100,9 @@ function Result() {
     };
 
     useEffect(() => {
-       fetchResult();
-       const date = new Date();
-       setDate(date.getFullYear()+'.'+(date.getMonth()+1) + '.' +date.getDate());
+    fetchResult();
+    const date = new Date();
+    setDate(date.getFullYear()+'.'+(date.getMonth()+1) + '.' +date.getDate());
     }, [])
     
 
@@ -169,8 +170,10 @@ function ResultShow(){
         "예체능",
     ];
 
-    const getJobAge = useSelector(state => state.jobAgeList);
-    const getJobMajor = useSelector(state => state.jobMajorList);
+    const { jobAge: getJobAge, jobMajor: getJobMajor } = useSelector(selector.getJobByType);
+
+    // const getJobAge = useSelector(selector.getJobAge);
+    // const getJobMajor = useSelector(selector.getJobMajor);
     
     useEffect(()=>{
         console.log('전체 데이터');
@@ -188,56 +191,87 @@ function ResultShow(){
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                    <td>{ageJobLabel[0]}</td>
-                    <td>
-                    {getJobAge.map((element)=>(
-                        (element[2] === 1)? 
-                        <span>{element[1]}  </span>
-                        : <span></span>
-                    ))}
-                    </td>
-                    </tr>
-                    <tr>
-                    <td>{ageJobLabel[1]}</td>
-                    <td>
-                    {getJobAge.map((element)=>(
-                        (element[2] === 2)? 
-                        <span>{element[1]}  </span>
-                        : <span></span>
-                    ))}
-                    </td>
-                    </tr>
-                    <tr>
-                    <td>{ageJobLabel[2]}</td>
-                    <td>
-                    {getJobAge.map((element)=>(
-                        (element[2] === 3)? 
-                        <span>{element[1]}  </span>
-                        : <span></span>
-                    ))}
-                    </td>
-                    </tr>
-                    <tr>
-                    <td>{ageJobLabel[3]}</td>
-                    <td>
-                    {getJobAge.map((element)=>(
-                        (element[2] === 4)? 
-                        <span>{element[1]}  </span>
-                        : <span></span>
-                    ))}
-                    </td>
-                    </tr>
-                    <tr>
-                    <td>{ageJobLabel[4]}</td>
-                    <td>
-                    {getJobAge.map((element)=>(
-                        (element[2] === 5)? 
-                        <span>{element[1]}  </span>
-                        : <span></span>
-                    ))}
-                    </td>
-                    </tr>
+
+                    {
+                        getJobAge.filter((element) => element[2] === 1).length !== 0?
+                        <tr>
+                        <td>{ageJobLabel[0]}</td>
+                        <td>
+                        {getJobAge.map((element)=>(
+                            (element[2] === 1)? 
+                            <span>{element[1]}  </span>
+                            : <span></span>
+                        ))}
+                        </td>
+                        </tr> 
+                        :
+                        <></>
+                    }
+                    
+                    {
+                        getJobAge.filter((element) => element[2] === 2).length !== 0?
+                        <tr>
+                        <td>{ageJobLabel[1]}</td>
+                        <td>
+                        {getJobAge.map((element)=>(
+                            (element[2] === 2)? 
+                            <span>{element[1]}  </span>
+                            : <span></span>
+                        ))}
+                        </td>
+                        </tr>
+                        :
+                        <></>
+                    }
+                    
+                    {
+                        getJobAge.filter((element) => element[2] === 3).length !== 0?
+                        <tr>
+                        <td>{ageJobLabel[2]}</td>
+                        <td>
+                        {getJobAge.map((element)=>(
+                            (element[2] === 3)? 
+                            <span>{element[1]}  </span>
+                            : <span></span>
+                        ))}
+                        </td>
+                        </tr>
+                        :
+                        <></>
+                    }
+                    
+                    {
+                        getJobAge.filter((element) => element[2] === 4).length !== 0?
+                        <tr>
+                        <td>{ageJobLabel[3]}</td>
+                        <td>
+                        {getJobAge.map((element)=>(
+                            (element[2] === 4)? 
+                            <span>{element[1]}  </span>
+                            : <span></span>
+                        ))}
+                        </td>
+                        </tr>
+                        :
+                        <></>
+                    }
+                    
+                    {
+                        getJobAge.filter((element) => element[2] === 2).length !== 0?
+                        <tr>
+                        <td>{ageJobLabel[4]}</td>
+                        <td>
+                        {getJobAge.map((element)=>(
+                            (element[2] === 5)? 
+                            <span>{element[1]}  </span>
+                            : <span></span>
+                        ))}
+                        </td>
+                        </tr>
+                        :
+                        <></>
+                    }
+                    
                 </tbody>
             </Table>
             <LabelBox>종사자 평균 전공별</LabelBox>
@@ -249,86 +283,134 @@ function ResultShow(){
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                    <td>{majorJobLabel[0]}</td>
-                    <td>
-                    {getJobMajor.map((element)=>(
-                        (element[2] === 1)? 
-                        <span>{element[1]}  </span>
-                        : <span></span>
-                    ))}
-                    </td>
-                    </tr>
-                    <tr>
-                    <td>{majorJobLabel[1]}</td>
-                    <td>
-                    {getJobMajor.map((element)=>(
-                        (element[2] === 2)? 
-                        <span>{element[1]}  </span>
-                        : <span></span>
-                    ))}
-                    </td>
-                    </tr>
-                    <tr>
-                    <td>{majorJobLabel[2]}</td>
-                    <td>
-                    {getJobMajor.map((element)=>(
-                        (element[2] === 3)? 
-                        <span>{element[1]}  </span>
-                        : <span></span>
-                    ))}
-                    </td>
-                    </tr>
-                    <tr>
-                    <td>{majorJobLabel[3]}</td>
-                    <td>
-                    {getJobMajor.map((element)=>(
-                        (element[2] === 4)? 
-                        <span>{element[1]}  </span>
-                        : <span></span>
-                    ))}
-                    </td>
-                    </tr>
-                    <tr>
-                    <td>{majorJobLabel[4]}</td>
-                    <td>
-                    {getJobMajor.map((element)=>(
-                        (element[2] === 5)? 
-                        <span>{element[1]}  </span>
-                        : <span></span>
-                    ))}
-                    </td>
-                    </tr>
-                    <tr>
-                    <td>{majorJobLabel[5]}</td>
-                    <td>
-                    {getJobMajor.map((element)=>(
-                        (element[2] === 6)? 
-                        <span>{element[1]}  </span>
-                        : <span></span>
-                    ))}
-                    </td>
-                    </tr>
-                    <tr>
-                    <td>{majorJobLabel[6]}</td>
-                    <td>
-                    {getJobMajor.map((element)=>(
-                        (element[2] === 7)? 
-                        <span>{element[1]}  </span>
-                        : <span></span>
-                    ))}
-                    </td>
-                    </tr>
-                    <tr>
-                    <td>{majorJobLabel[7]}</td>
-                    <td>
-                    {getJobMajor.map((element)=>(
-                        (element[2] === 8)? 
-                        <span>{element[1]}  </span>
-                        : <span></span>
-                    ))}
-                    </td>
-                    </tr>
+                    {
+                        getJobMajor.filter((element) => element[2] === 1).length !== 0?
+                        <tr>
+                        <td>{majorJobLabel[0]}</td>
+                        <td>
+                        {getJobMajor.map((element)=>(
+                            (element[2] === 1)? 
+                            <span>{element[1]}  </span>
+                            : <span></span>
+                        ))}
+                        </td>
+                        </tr>
+                        :
+                        <></>
+                    }
+                    
+                    {
+                        getJobMajor.filter((element) => element[2] === 2).length !== 0?
+                        <tr>
+                        <td>{majorJobLabel[1]}</td>
+                        <td>
+                        {getJobMajor.map((element)=>(
+                            (element[2] === 2)? 
+                            <span>{element[1]}  </span>
+                            : <span></span>
+                        ))}
+                        </td>
+                        </tr>
+                        :
+                        <></>
+                    }
+
+                    {
+                        getJobMajor.filter((element) => element[2] === 3).length !== 0?
+                        <tr>
+                        <td>{majorJobLabel[2]}</td>
+                        <td>
+                        {getJobMajor.map((element)=>(
+                            (element[2] === 3)? 
+                            <span>{element[1]}  </span>
+                            : <span></span>
+                        ))}
+                        </td>
+                        </tr>
+                        :
+                        <></>
+                    }
+
+                    {
+                        getJobMajor.filter((element) => element[2] === 4).length !== 0?
+                        <tr>
+                        <td>{majorJobLabel[3]}</td>
+                        <td>
+                        {getJobMajor.map((element)=>(
+                            (element[2] === 4)? 
+                            <span>{element[1]}  </span>
+                            : <span></span>
+                        ))}
+                        </td>
+                        </tr>
+                        :
+                        <></>
+                    }
+
+                    {
+                        getJobMajor.filter((element) => element[2] === 5).length !== 0?
+                        <tr>
+                        <td>{majorJobLabel[4]}</td>
+                        <td>
+                        {getJobMajor.map((element)=>(
+                            (element[2] === 5)? 
+                            <span>{element[1]}  </span>
+                            : <span></span>
+                        ))}
+                        </td>
+                        </tr>
+                        :
+                        <></>
+                    }
+
+                    {
+                        getJobMajor.filter((element) => element[2] === 6).length !== 0?
+                        <tr>
+                        <td>{majorJobLabel[5]}</td>
+                        <td>
+                        {getJobMajor.map((element)=>(
+                            (element[2] === 6)? 
+                            <span>{element[1]}  </span>
+                            : <span></span>
+                        ))}
+                        </td>
+                        </tr>
+                        :
+                        <></>
+                    }
+
+                    {
+                        getJobMajor.filter((element) => element[2] === 7).length !== 0?
+                        <tr>
+                        <td>{majorJobLabel[6]}</td>
+                        <td>
+                        {getJobMajor.map((element)=>(
+                            (element[2] === 7)? 
+                            <span>{element[1]}  </span>
+                            : <span></span>
+                        ))}
+                        </td>
+                        </tr>
+                        :
+                        <></>
+                    }
+
+                    {
+                        getJobMajor.filter((element) => element[2] === 8).length !== 0?
+                        <tr>
+                        <td>{majorJobLabel[7]}</td>
+                        <td>
+                        {getJobMajor.map((element)=>(
+                            (element[2] === 8)? 
+                            <span>{element[1]}  </span>
+                            : <span></span>
+                        ))}
+                        </td>
+                        </tr>
+                        :
+                        <></>
+                    }
+
                 </tbody>
             </Table>
         </>
@@ -341,7 +423,7 @@ function RestartButton(){
     const dispatch = useDispatch();
 
     const handleClickRestartButton = () => {
-        dispatch(resetValues());
+        dispatch(actions.resetValues());
         history.push('./');
     }
 
@@ -393,29 +475,28 @@ const ChartWrapper = styled.div`
 `
 
 const Container = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 800px;
-  height: 1700px;
-  flex-direction: column;
-  margin-left: auto;
-  margin-right: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 800px;
+    height: auto;
+    flex-direction: column;
+    margin: 100px auto;
 
- Table {
-    text-align: center;
-    font-weight: bold;
-    background-color: Lavender;
-    border: 1px solid Indigo;
- }
+    Table {
+        text-align: center;
+        font-weight: bold;
+        background-color: Lavender;
+        border: 1px solid Indigo;
+    }
 
- Button {
-    margin-top: 20px;
-    font-size: 25px;
-    background-color: Lavender;
-    color: Indigo;
-    font-weight: bold;
-    border: 0;
-    outline: 0;
- }
+    Button {
+        margin-top: 20px;
+        font-size: 25px;
+        background-color: Lavender;
+        color: Indigo;
+        font-weight: bold;
+        border: 0;
+        outline: 0;
+    }
 `

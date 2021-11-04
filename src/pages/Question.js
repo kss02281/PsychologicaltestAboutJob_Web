@@ -1,28 +1,26 @@
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { addQuestionScore } from '../redux/action';
+import { actions } from '../store/modules/reducer';
 import styled, {css} from 'styled-components'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Button, ProgressBar } from 'react-bootstrap'
 import { FaArrowAltCircleRight, FaArrowAltCircleLeft } from "react-icons/fa";
 import QuestionForm from "../components/QuestionForm";
 import { useHistory } from "react-router-dom";
-
-
-
+import { selector } from '../store/modules/reducer'
 
 function QuestionList() {
   const dispatch = useDispatch();
   const history = useHistory();
 
-  const questions = useSelector(state => state.question);
-  const questionTotalNumber = useSelector(state => state.questionTotalNumber);
-  const getScoreList = useSelector(state => state.questionScoreList);
+  const questions = useSelector(selector.questions);
+  const questionTotalNumber = useSelector(selector.questionTotalNumber);
+  const getScoreList = useSelector(selector.getScoreList);
   const pageCount = Math.ceil(questionTotalNumber/5);
 
-  const [selectQuestion, setSelectQuestion] = useState(questions.slice(0, 5));
+  const [selectQuestion, setSelectQuestion] = useState([]);
   const [currPage, setCurrPage] = useState(0);
-  const [score, setScore] = useState(0);
+  const [scoreValue, setScoreValue] = useState(0);
   const [itemNumber, setItemNumber] = useState(1);
   const [percentage, setPercentage] = useState(0);
 
@@ -35,14 +33,17 @@ function QuestionList() {
   }
 
   useEffect(()=>{
-    if(currPage !== 5){
-      console.log(currPage)
-      setSelectQuestion(questions.slice(currPage*5, (currPage+1)*5));
-    }else{
-      console.log(currPage, 'last page')
-      setSelectQuestion(questions.slice((currPage)*5,));
+    if(questions){
+      if(currPage !== 5){
+        console.log(currPage)
+        setSelectQuestion(questions.slice(currPage*5, (currPage+1)*5));
+      }else{
+        console.log(currPage, 'last page')
+        setSelectQuestion(questions.slice((currPage)*5,));
+      }
     }
-  },[ currPage ])
+
+  },[ currPage, questions ])
 
   useEffect(()=>{
     console.log(selectQuestion);
@@ -56,22 +57,23 @@ function QuestionList() {
   }
 
   const displayScore = (newScore) => {
-    setScore({...score, ...newScore});
+    setScoreValue({...scoreValue, ...newScore});
     console.log('displayScore');
   }
 
   useEffect(() => {
     console.log('Change score')
-    console.log(score);
-    setItemNumber(score.id);
-    if (score) {
-      dispatch(addQuestionScore(score.id,score.score,score.state));
+    console.log(scoreValue);
+    setItemNumber(scoreValue.id);
+    if (scoreValue) {
+      const {id, score, description} = scoreValue;
+      dispatch(actions.addQuestionScore({id,score,description}));
     }
     
-  }, [score])
+  }, [scoreValue])
 
   useEffect(() => {
-    if(score){
+    if(scoreValue){
       setPercentage(Math.ceil((getScoreList.length/questionTotalNumber)*100));
       console.log(getScoreList);
     }
