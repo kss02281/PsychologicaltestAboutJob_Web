@@ -1,12 +1,14 @@
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { addQuestionScore, setScoreString, setGenderNumber } from '../redux/action';
+import { addQuestionScore } from '../redux/action';
 import styled, {css} from 'styled-components'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Button, ProgressBar } from 'react-bootstrap'
 import { FaArrowAltCircleRight, FaArrowAltCircleLeft } from "react-icons/fa";
 import QuestionForm from "../components/QuestionForm";
 import { useHistory } from "react-router-dom";
+
+
 
 
 function QuestionList() {
@@ -24,10 +26,6 @@ function QuestionList() {
   const [itemNumber, setItemNumber] = useState(1);
   const [percentage, setPercentage] = useState(0);
 
-  useEffect(()=>{
-    setSelectQuestion(questions.slice(currPage*5, (currPage+1)*5));
-  },[ selectQuestion, currPage])
-
   const handleClickLeftArrow = ()=>{
     setCurrPage(currPage - 1);
   }
@@ -35,6 +33,22 @@ function QuestionList() {
   const handleClickRightArrow = ()=>{
     setCurrPage(currPage + 1);
   }
+
+  useEffect(()=>{
+    if(currPage !== 5){
+      console.log(currPage)
+      setSelectQuestion(questions.slice(currPage*5, (currPage+1)*5));
+    }else{
+      console.log(currPage, 'last page')
+      setSelectQuestion(questions.slice((currPage)*5,));
+    }
+  },[ currPage ])
+
+  useEffect(()=>{
+    console.log(selectQuestion);
+  }, [ selectQuestion ])
+
+
   const handleClickCompleteButton = () => {
     console.log('검사 완료');
     console.log('최종 선택지 결과',getScoreList);
@@ -51,7 +65,7 @@ function QuestionList() {
     console.log(score);
     setItemNumber(score.id);
     if (score) {
-      dispatch(addQuestionScore(score.id,score.score));
+      dispatch(addQuestionScore(score.id,score.score,score.state));
     }
     
   }, [score])
@@ -73,22 +87,20 @@ function QuestionList() {
       
       <Container>
         {
-        selectQuestion.map((question, idx) => (
-        <> 
+        selectQuestion?.map((question, idx) => (
           <QuestionForm 
-          key={idx}
-          commonQuestion={question.question}
-          questionItemNumber={question.qitemNo}
-          question01={question.answer01}
-          question02={question.answer02}
-          firstQuestionState={question.answer03}
-          secondQuestionState={question.answer04}
-          answerScore01={question.answerScore01}
-          answerScore02={question.answerScore02}
-          currPage={currPage}
-          onButtonClick={displayScore}
+            key={idx}
+            commonQuestion={question.question}
+            questionItemNumber={question.qitemNo}
+            question01={question.answer01}
+            question02={question.answer02}
+            firstQuestionState={question.answer03}
+            secondQuestionState={question.answer04}
+            answerScore01={question.answerScore01}
+            answerScore02={question.answerScore02}
+            currPage={currPage}
+            onButtonClick={displayScore}
           />
-      </>
       ))
       }
     </Container>
