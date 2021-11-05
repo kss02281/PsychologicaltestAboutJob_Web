@@ -37,7 +37,6 @@ function GoResultPage(){
   }, [getScoreList, genderStr])
 
   const handleClickFinalResultButton = () => {
-    console.log('결과 페이지로');
     dispatch(actions.setScoreString(wonScore));
     dispatch(actions.setGenderNumber(genderNumber));
     history.push('./finalResult');

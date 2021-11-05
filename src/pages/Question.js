@@ -1,7 +1,7 @@
-import React, { useEffect, useState, useMemo, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { actions } from '../store/modules/reducer';
-import styled, {css} from 'styled-components'
+import styled from 'styled-components'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Button, ProgressBar } from 'react-bootstrap'
 import { FaArrowAltCircleRight, FaArrowAltCircleLeft } from "react-icons/fa";
@@ -35,52 +35,35 @@ function QuestionList() {
   useEffect(()=>{
     if(questions){
       if(currPage !== 5){
-        console.log(currPage)
         setSelectQuestion(questions.slice(currPage*5, (currPage+1)*5));
       }else{
-        console.log(currPage, 'last page')
         setSelectQuestion(questions.slice((currPage)*5,));
       }
     }
 
   },[ currPage, questions ])
 
-  useEffect(()=>{
-    console.log(selectQuestion);
-  }, [ selectQuestion ])
-
-
   const handleClickCompleteButton = () => {
-    console.log('검사 완료');
-    console.log('최종 선택지 결과',getScoreList);
     history.push('./resultWait');
   }
 
   const displayScore = (newScore) => {
     setScoreValue({...scoreValue, ...newScore});
-    console.log('displayScore');
   }
 
   useEffect(() => {
-    console.log('Change score')
-    console.log(scoreValue);
     setItemNumber(scoreValue.id);
     if (scoreValue) {
       const {id, score, description} = scoreValue;
       dispatch(actions.addQuestionScore({id,score,description}));
     }
-    
   }, [scoreValue])
 
   useEffect(() => {
     if(scoreValue){
       setPercentage(Math.ceil((getScoreList.length/questionTotalNumber)*100));
-      console.log(getScoreList);
     }
-    console.log('다음 질문으로 넘어갔습니다.');
   }, [ itemNumber ])
-
-
 
   return (
     <>

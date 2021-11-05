@@ -1,5 +1,4 @@
-import React, { useEffect } from "react";
-import axios from 'axios';
+import React from "react";
 import { useState, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { actions } from "../store/modules/reducer";
@@ -11,7 +10,6 @@ import { useHistory } from "react-router-dom";
 
 import { ToastContainer, toast } from 'material-react-toastify';
 import 'material-react-toastify/dist/ReactToastify.css';
-import { useSelector } from 'react-redux';
 
 
 function InputUserForm() {
@@ -20,9 +18,6 @@ function InputUserForm() {
     const history = useHistory();
     const [name, setName] = useState('');
     const [gender, setGender] = useState('');
-    const [error, setError] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [select, setSelect] = useState(0);
 
     const handleClickRadioButton = useCallback((radioBtnName) => {
         setGender(radioBtnName)
@@ -120,31 +115,31 @@ const Title = styled.h1`
 `
 
 const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin-top: 70px;
-  align-items: center;
-  justify-content: center;
-  
-  @media (max-width: 400px) {
-    width: 100%;
-    max-width: 400px;
-    justify-content: start;
-    flex-wrap: wrap;
-  }
+    display: flex;
+    flex-direction: column;
+    margin-top: 70px;
+    align-items: center;
+    justify-content: center;
+    
+    @media (max-width: 400px) {
+        width: 100%;
+        max-width: 400px;
+        justify-content: start;
+        flex-wrap: wrap;
+    }
 
-  Button {
-      margin-top: 30px;
-  }
+    Button {
+        margin-top: 30px;
+    }
 `
 
 const RadioBtnBox = styled.div`
-  margin: 15px 5px;
-  font-size: 20px;
+    margin: 15px 5px;
+    font-size: 20px;
 `
 
 const RadioBtn = styled.input`
-  margin-right: 5px;
+    margin-right: 5px;
 `
 
 const blink = keyframes`

@@ -13,7 +13,7 @@ import { selector } from '../store/modules/reducer';
 function Sample() {
     const dispatch = useDispatch();
     const history = useHistory();
-    const questions = useSelector(state => state.question);
+    const questions = useSelector(selector.questions);
 
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -42,7 +42,6 @@ function Sample() {
     useEffect(() => { 
       if(questions){
         setFirstQuestion(questions.slice(0,1));
-        console.log(firstQuestion);
       }
       
     }, [ questions ]);
