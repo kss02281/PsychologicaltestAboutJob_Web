@@ -1,9 +1,9 @@
 import React from "react";
 import { useEffect, useState, useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import styled, {css} from 'styled-components'
+import { useSelector } from 'react-redux';
+import styled from 'styled-components'
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Card, Button } from 'react-bootstrap';
+import { Card } from 'react-bootstrap';
 import { selector } from '../store/modules/reducer';
 
 function QuestionForm(props) {
@@ -20,14 +20,12 @@ function QuestionForm(props) {
     const secondQuestionState = props.secondQuestionState;
     const answerScore01 = props.answerScore01;
     const answerScore02 = props.answerScore02;
-    const currPage = props.currPage;
     const onButtonClick = props.onButtonClick;
 
     useEffect(()=>{
       if(getScoreList){
         getScoreList.map((item) => {
           if(item.id === questionItemNumber){
-            //console.log('getScoreList',questionItemNumber,' : ',item.questionScore);
             setSelect(item.score);
             setState(item.description);
           }

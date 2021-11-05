@@ -1,10 +1,10 @@
-import React, { useEffect, useState, PureComponent } from "react";
-import styled, { isStyledComponent } from "styled-components";
+import React, { useEffect, useState } from "react";
+import styled from "styled-components";
 import { useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
 import { actions } from '../store/modules/reducer';
 import axios from 'axios';
-import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 import Table from 'react-bootstrap/Table'
 import { Button } from 'react-bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -84,15 +84,7 @@ function Result() {
             const response3 = await axios.get('https://inspct.career.go.kr/inspct/api/psycho/value/jobs',{params: {no1: no1, no2: no2}});
             const response4 = await axios.get('https://inspct.career.go.kr/inspct/api/psycho/value/majors',{params: {no1: no1, no2: no2}});
 
-            console.log('종사자 평균 학력별 직업 정보 요청');
-            //console.log(response3.data);
-
-            console.log('종사자 평균 전공별 직업 정보 요청');
-            //console.log(response4.data);
-
             dispatch(actions.setJobList({jobAgeList : response3.data, jobMajorList : response4.data}));
-
-            
             setLoading(false);
         } catch (e) {
             setError(e);
@@ -171,9 +163,6 @@ function ResultShow(){
     ];
 
     const { jobAge: getJobAge, jobMajor: getJobMajor } = useSelector(selector.getJobByType);
-
-    // const getJobAge = useSelector(selector.getJobAge);
-    // const getJobMajor = useSelector(selector.getJobMajor);
     
     useEffect(()=>{
         console.log('전체 데이터');
