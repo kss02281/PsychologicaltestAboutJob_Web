@@ -9,6 +9,9 @@ ___
 [결과]([직업심리검사_결과물 (1).pdf](https://github.com/kss02281/PsychologicaltestAboutJob_ReactWeb/files/7779294/_.1.pdf))
 ___
 ### **리팩토링 스터디 결과**
+![2차스터디(리팩토링조)_자료-12-13_page-0001](https://user-images.githubusercontent.com/82202370/229983044-deb474c1-15dc-40cc-a18f-37c6622ac85e.jpg)
+![2차스터디(리팩토링조)_자료-12-13_page-0002](https://user-images.githubusercontent.com/82202370/229983059-0e5fbb61-6a1d-4f5a-8bb4-4cafe047562f.jpg)
+___
 
 ### **실행 방법**
 In the project directory, you can run:
